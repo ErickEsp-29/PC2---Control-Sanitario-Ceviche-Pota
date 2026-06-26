@@ -5,6 +5,8 @@ import { DashboardLayout } from "@/layouts/DashboardLayout"
 import { Login } from "@/pages/Login"
 import { Vendors } from "@/pages/Vendors"
 import { Inspections } from "@/pages/Inspections"
+import { Stands } from "@/pages/Stands"
+import { Licenses } from "@/pages/Licenses"
 import { QRCodeSVG } from 'qrcode.react'
 
 // Mock/Placeholder Views with premium styling
@@ -121,15 +123,6 @@ const Dashboard = () => (
   </div>
 )
 
-const PlaceholderView = ({ title }: { title: string }) => (
-  <div className="space-y-4">
-    <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-    <div className="rounded-lg border-2 border-dashed border-border bg-card/30 p-12 text-center text-muted-foreground">
-      Módulo en desarrollo. Próximamente se integrará con las tablas de Supabase en el Prompt correspondiente.
-    </div>
-  </div>
-)
-
 function App() {
   return (
     <AuthProvider>
@@ -151,8 +144,8 @@ function App() {
           >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/vendedores" element={<Vendors />} />
-            <Route path="/puestos" element={<PlaceholderView title="Gestión de Puestos" />} />
-            <Route path="/licencias" element={<PlaceholderView title="Gestión de Licencias" />} />
+            <Route path="/puestos" element={<Stands />} />
+            <Route path="/licencias" element={<Licenses />} />
             <Route path="/inspecciones" element={<Inspections />} />
           </Route>
 
