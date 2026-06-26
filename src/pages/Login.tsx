@@ -15,15 +15,68 @@ export const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
+  // Validation states
+  const [emailError, setEmailError] = useState<string | null>(null)
+  const [passwordError, setPasswordError] = useState<string | null>(null)
+
   // View modes: 'login' | 'forgot'
   const [mode, setMode] = useState<'login' | 'forgot'>('login')
 
   const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/dashboard'
 
+  const validateEmail = (val: string): boolean => {
+    if (!val.trim()) {
+      setEmailError('El correo electrónico es obligatorio.')
+      return false
+    }
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!regex.test(val)) {
+      setEmailError('Formato de correo electrónico inválido.')
+      return false
+    }
+    setEmailError(null)
+    return true
+  }
+
+  const validatePassword = (val: string): boolean => {
+    if (mode === 'login') {
+      if (!val) {
+        setPasswordError('La contraseña es obligatoria.')
+        return false
+      }
+      if (val.length < 6) {
+        setPasswordError('La contraseña debe tener al menos 6 caracteres (estándar de Supabase Auth).')
+        return false
+      }
+    }
+    setPasswordError(null)
+    return true
+  }
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setEmail(val)
+    validateEmail(val)
+  }
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setPassword(val)
+    validatePassword(val)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSuccess(null)
+
+    const isEmailValid = validateEmail(email)
+    const isPasswordValid = validatePassword(password)
+
+    if (!isEmailValid || (mode === 'login' && !isPasswordValid)) {
+      return
+    }
+
     setLoading(true)
 
     if (mode === 'login') {
@@ -51,6 +104,13 @@ export const Login: React.FC = () => {
     }
   }
 
+  const isSubmitDisabled = 
+    loading || 
+    !!emailError || 
+    (mode === 'login' && !!passwordError) || 
+    !email || 
+    (mode === 'login' && !password)
+
   return (
     <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
@@ -71,7 +131,7 @@ export const Login: React.FC = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md animate-fade-in">
         <div className="bg-card py-8 px-4 border border-border rounded-lg shadow-sm sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             {error && (
               <div className="rounded-md bg-destructive/10 p-4 border border-destructive/20 text-destructive text-sm font-medium animate-pulse">
                 {error}
@@ -96,11 +156,16 @@ export const Login: React.FC = () => {
                   autoComplete="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  onChange={handleEmailChange}
+                  className={`block w-full rounded-md border ${
+                    emailError ? 'border-destructive focus:ring-destructive' : 'border-input focus:ring-ring'
+                  } bg-background px-3 py-2 text-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-offset-2`}
                   placeholder="ejemplo@municipalidad.gob.pe"
                 />
               </div>
+              {emailError && (
+                <p className="mt-1.5 text-xs text-destructive font-medium">{emailError}</p>
+              )}
             </div>
 
             {mode === 'login' && (
@@ -115,6 +180,8 @@ export const Login: React.FC = () => {
                       setMode('forgot')
                       setError(null)
                       setSuccess(null)
+                      setEmailError(null)
+                      setPasswordError(null)
                     }}
                     className="text-sm font-medium text-primary hover:underline bg-transparent border-0 cursor-pointer"
                   >
@@ -129,18 +196,23 @@ export const Login: React.FC = () => {
                     autoComplete="current-password"
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    onChange={handlePasswordChange}
+                    className={`block w-full rounded-md border ${
+                      passwordError ? 'border-destructive focus:ring-destructive' : 'border-input focus:ring-ring'
+                    } bg-background px-3 py-2 text-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-offset-2`}
                     placeholder="••••••••"
                   />
                 </div>
+                {passwordError && (
+                  <p className="mt-1.5 text-xs text-destructive font-medium">{passwordError}</p>
+                )}
               </div>
             )}
 
             <div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={isSubmitDisabled}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:pointer-events-none transition-colors cursor-pointer"
               >
                 {loading ? (
@@ -162,6 +234,8 @@ export const Login: React.FC = () => {
                   setMode('login')
                   setError(null)
                   setSuccess(null)
+                  setEmailError(null)
+                  setPasswordError(null)
                 }}
                 className="text-sm font-medium text-primary hover:underline bg-transparent border-0 cursor-pointer"
               >

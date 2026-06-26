@@ -1,8 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
 import { DashboardLayout } from "@/layouts/DashboardLayout"
 import { Login } from "@/pages/Login"
+import { QRCodeSVG } from 'qrcode.react'
 
 // Mock/Placeholder Views with premium styling
 const Home = () => (
@@ -50,33 +51,46 @@ const Home = () => (
   </div>
 )
 
-const PublicConsulta = () => (
-  <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
-    <div className="max-w-md w-full bg-card border border-border p-8 rounded-lg shadow-sm space-y-6">
-      <div className="inline-flex items-center justify-center rounded-full bg-emerald-500/10 p-3 text-emerald-600">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
-        </svg>
+const PublicConsulta = () => {
+  const { id } = useParams<{ id: string }>()
+  const codigoPuesto = id || 'PST-001'
+  const currentUrl = `${window.location.origin}/consulta/${codigoPuesto}`
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
+      <div className="max-w-md w-full bg-card border border-border p-8 rounded-lg shadow-sm space-y-6">
+        <div className="inline-flex items-center justify-center rounded-full bg-emerald-500/10 p-3 text-emerald-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+          </svg>
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Consulta Ciudadana</h1>
+        <p className="text-muted-foreground text-sm">
+          Escanea el código QR del puesto para verificar en tiempo real si cuenta con licencia municipal vigente e inspecciones sanitarias aprobadas.
+        </p>
+
+        {/* Generación dinámica de código QR */}
+        <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg border border-border shadow-inner max-w-[200px] mx-auto">
+          <QRCodeSVG value={currentUrl} size={160} />
+          <span className="mt-2 text-[10px] text-muted-foreground font-mono truncate max-w-full">{codigoPuesto}</span>
+        </div>
+
+        <div className="border border-border p-4 rounded-md bg-muted/30 text-left text-xs font-mono space-y-1">
+          <div>Puesto: {codigoPuesto}</div>
+          <div>Vendedor: Juan Alberto Gómez Rivera</div>
+          <div>Estado: <span className="text-emerald-600 font-bold">VIGENTE / SALUBRE</span></div>
+          <div>Última inspección: 2026-06-20 (Aprobado)</div>
+        </div>
+        <a
+          href="/"
+          className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-8 py-2"
+        >
+          Ir al Inicio
+        </a>
       </div>
-      <h1 className="text-2xl font-bold tracking-tight">Consulta Ciudadana</h1>
-      <p className="text-muted-foreground text-sm">
-        Escanea el código QR del puesto para verificar en tiempo real si cuenta con licencia municipal vigente e inspecciones sanitarias aprobadas.
-      </p>
-      <div className="border border-border p-4 rounded-md bg-muted/30 text-left text-xs font-mono space-y-1">
-        <div>Puesto: PST-001</div>
-        <div>Vendedor: Juan Alberto Gómez Rivera</div>
-        <div>Estado: <span className="text-emerald-600 font-bold">VIGENTE / SALUBRE</span></div>
-        <div>Última inspección: 2026-06-20 (Aprobado)</div>
-      </div>
-      <a
-        href="/"
-        className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-8 py-2"
-      >
-        Ir al Inicio
-      </a>
     </div>
-  </div>
-)
+  )
+}
 
 const Dashboard = () => (
   <div className="space-y-6">
