@@ -128,12 +128,18 @@ export const Stands: React.FC = () => {
       }
     }
 
+    // Ubicacion Validation
     if (!ubicacion.trim()) {
       errors.ubicacion = 'La ubicación es obligatoria.'
+    } else if (ubicacion.trim().length < 5 || ubicacion.trim().length > 100) {
+      errors.ubicacion = 'La ubicación debe tener entre 5 y 100 caracteres.'
     }
 
+    // Tipo Carretilla Validation
     if (!tipoCarretilla.trim()) {
       errors.tipoCarretilla = 'El tipo de carretilla es obligatorio.'
+    } else if (tipoCarretilla.trim().length < 5 || tipoCarretilla.trim().length > 50) {
+      errors.tipoCarretilla = 'El tipo de carretilla debe tener entre 5 y 50 caracteres.'
     }
 
     if (!vendedorId) {

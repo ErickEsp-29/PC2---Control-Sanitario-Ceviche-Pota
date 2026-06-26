@@ -65,8 +65,22 @@ function validateForm(form: FormState): Record<string, string> {
   const temp = parseFloat(form.temperatura_pota)
   if (form.temperatura_pota === '' || isNaN(temp)) {
     errors.temperatura_pota = 'La temperatura es obligatoria y debe ser numérica.'
-  } else if (temp < TEMP_MIN || temp > TEMP_MAX) {
-    errors.temperatura_pota = `Temperatura fuera de rango de cadena de frío (${TEMP_MIN}°C a ${TEMP_MAX}°C).`
+  } else if (temp < -10.0 || temp > 40.0) {
+    errors.temperatura_pota = 'La temperatura debe estar en el rango de -10.0°C a 40.0°C.'
+  } else if (form.resultado === 'Aprobado' && (temp < TEMP_MIN || temp > TEMP_MAX)) {
+    errors.temperatura_pota = `No se puede aprobar la inspección si la temperatura está fuera del rango de cadena de frío (${TEMP_MIN}°C a ${TEMP_MAX}°C).`
+  }
+
+  if (form.resultado === 'Aprobado' && !form.verificacion_especie) {
+    errors.verificacion_especie = 'No se puede aprobar la inspección si la verificación de la especie (pota) es negativa.'
+  }
+
+  if (form.resultado !== 'Aprobado') {
+    if (!form.observaciones.trim()) {
+      errors.observaciones = 'Las observaciones son obligatorias para resultados observados o desaprobados.'
+    } else if (form.observaciones.trim().length < 15) {
+      errors.observaciones = 'Las observaciones deben tener al menos 15 caracteres para detallar las fallas.'
+    }
   }
 
   return errors
@@ -594,23 +608,30 @@ export function Inspections() {
               </div>
 
               {/* Verificación Especie */}
-              <div className="flex items-start gap-3 rounded-md border border-border bg-muted/20 p-3">
-                <input
-                  id="verificacion_especie"
-                  name="verificacion_especie"
-                  type="checkbox"
-                  checked={form.verificacion_especie}
-                  onChange={handleChange}
-                  className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <div>
-                  <label htmlFor="verificacion_especie" className="text-sm font-medium cursor-pointer">
-                    Verificación de Especie Confirmada
-                  </label>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Marcar si se confirmó que el producto es pota auténtica (Dosidicus gigas).
-                  </p>
+              <div>
+                <div className={`flex items-start gap-3 rounded-md border bg-muted/20 p-3 ${
+                  formErrors.verificacion_especie ? 'border-red-400' : 'border-border'
+                }`}>
+                  <input
+                    id="verificacion_especie"
+                    name="verificacion_especie"
+                    type="checkbox"
+                    checked={form.verificacion_especie}
+                    onChange={handleChange}
+                    className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <div>
+                    <label htmlFor="verificacion_especie" className="text-sm font-medium cursor-pointer">
+                      Verificación de Especie Confirmada
+                    </label>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Marcar si se confirmó que el producto es pota auténtica (Dosidicus gigas).
+                    </p>
+                  </div>
                 </div>
+                {formErrors.verificacion_especie && (
+                  <p className="mt-1 text-xs text-red-500">{formErrors.verificacion_especie}</p>
+                )}
               </div>
 
               {/* Resultado */}
@@ -652,7 +673,9 @@ export function Inspections() {
               <div>
                 <label htmlFor="observaciones" className="block text-sm font-medium mb-1.5">
                   Observaciones{' '}
-                  <span className="text-muted-foreground text-xs font-normal">(opcional)</span>
+                  <span className="text-muted-foreground text-xs font-normal">
+                    {form.resultado !== 'Aprobado' ? '(requerido - mín 15 caracteres)' : '(opcional)'}
+                  </span>
                 </label>
                 <textarea
                   id="observaciones"
@@ -661,8 +684,13 @@ export function Inspections() {
                   onChange={handleChange}
                   rows={3}
                   placeholder="Detalles adicionales sobre la inspección..."
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+                  className={`w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm resize-none focus:outline-none focus:ring-1 focus:ring-ring ${
+                    formErrors.observaciones ? 'border-red-400' : 'border-input'
+                  }`}
                 />
+                {formErrors.observaciones && (
+                  <p className="mt-1 text-xs text-red-500">{formErrors.observaciones}</p>
+                )}
               </div>
 
               {/* Acciones */}

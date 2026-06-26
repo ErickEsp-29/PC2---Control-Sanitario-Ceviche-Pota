@@ -142,12 +142,22 @@ export const Licenses: React.FC = () => {
 
     if (!fechaEmision) {
       errors.fechaEmision = 'La fecha de emisión es obligatoria.'
+    } else {
+      const year = new Date(fechaEmision).getFullYear()
+      if (year < 2000 || year > 2100) {
+        errors.fechaEmision = 'La fecha de emisión debe estar entre el año 2000 y 2100.'
+      }
     }
 
     if (!fechaVencimiento) {
       errors.fechaVencimiento = 'La fecha de vencimiento es obligatoria.'
-    } else if (fechaEmision && new Date(fechaVencimiento) < new Date(fechaEmision)) {
-      errors.fechaVencimiento = 'La fecha de vencimiento no puede ser menor a la de emisión.'
+    } else {
+      const year = new Date(fechaVencimiento).getFullYear()
+      if (year < 2000 || year > 2100) {
+        errors.fechaVencimiento = 'La fecha de vencimiento debe estar entre el año 2000 y 2100.'
+      } else if (fechaEmision && new Date(fechaVencimiento) < new Date(fechaEmision)) {
+        errors.fechaVencimiento = 'La fecha de vencimiento no puede ser menor a la de emisión.'
+      }
     }
 
     setFormErrors(errors)

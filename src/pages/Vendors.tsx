@@ -68,7 +68,7 @@ export const Vendors: React.FC = () => {
       if (!dni.trim()) {
         errors.dni = 'El DNI es obligatorio.'
       } else if (!/^\d{8}$/.test(dni.trim())) {
-        errors.dni = 'El DNI debe tener exactamente 8 dígitos.'
+        errors.dni = 'El DNI debe tener exactamente 8 dígitos numéricos.'
       } else {
         // Check uniqueness in local state or database
         const exists = vendors.some((v) => v.dni === dni.trim())
@@ -89,26 +89,42 @@ export const Vendors: React.FC = () => {
       }
     }
 
-    // Nombres & Apellidos Validation
+    // Nombres Validation
     if (!nombres.trim()) {
       errors.nombres = 'El nombre es obligatorio.'
+    } else if (/\d/.test(nombres)) {
+      errors.nombres = 'El nombre no debe contener números.'
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(nombres.trim())) {
+      errors.nombres = 'El nombre solo debe contener letras.'
+    } else if (nombres.trim().length < 3 || nombres.trim().length > 15) {
+      errors.nombres = 'El nombre debe tener entre 3 y 15 caracteres.'
     }
+
+    // Apellidos Validation
     if (!apellidos.trim()) {
       errors.apellidos = 'El apellido es obligatorio.'
+    } else if (/\d/.test(apellidos)) {
+      errors.apellidos = 'El apellido no debe contener números.'
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(apellidos.trim())) {
+      errors.apellidos = 'El apellido solo debe contener letras.'
+    } else if (apellidos.trim().length < 3 || apellidos.trim().length > 15) {
+      errors.apellidos = 'El apellido debe tener entre 3 y 15 caracteres.'
     }
 
     // Telefono Validation
     if (telefono.trim()) {
-      if (!/^\d{9}$/.test(telefono.trim())) {
-        errors.telefono = 'El celular debe tener exactamente 9 dígitos.'
+      if (!/^\d+$/.test(telefono.trim())) {
+        errors.telefono = 'El celular debe contener solo números.'
+      } else if (!/^9\d{8}$/.test(telefono.trim())) {
+        errors.telefono = 'El celular debe empezar con 9 y tener exactamente 9 dígitos.'
       }
     }
 
     // Email Validation
     if (email.trim()) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.(com|es)|outlook\.(com|es))$/i
       if (!emailRegex.test(email.trim())) {
-        errors.email = 'Formato de correo electrónico inválido.'
+        errors.email = 'El correo electrónico debe terminar en gmail.com, hotmail.com/es o outlook.com/es.'
       }
     }
 
