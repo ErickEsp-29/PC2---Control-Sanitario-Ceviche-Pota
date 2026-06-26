@@ -1,75 +1,29 @@
-# React + TypeScript + Vite
+# PC2 - Control Sanitario Ceviche Pota
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema web municipal para el registro de vendedores ambulantes de ceviche de pota, administración de licencias, fiscalización sanitaria (inspecciones) y consulta pública ciudadana.
 
-Currently, two official plugins are available:
+## 🚀 Despliegue en Producción
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+La aplicación se encuentra desplegada y disponible públicamente en Vercel:
+- **URL de Producción**: [https://pc-2-control-sanitario-ceviche-pota.vercel.app/](https://pc-2-control-sanitario-ceviche-pota.vercel.app/)
 
-## React Compiler
+### 🔑 Credenciales de Acceso (Admin Seed)
+Para evaluar las secciones restringidas del sistema administrativo/inspección, inicie sesión con el siguiente usuario administrador precargado en Supabase Auth:
+- **Correo**: `erick@gmail.com`
+- **Contraseña**: `erick123`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tecnologías Utilizadas
+- **Frontend**: React 19, TypeScript, Tailwind CSS v4, React Router v7.
+- **Backend & Database**: Supabase (PostgreSQL), con integridad referencial en Tercera Forma Normal (3FN) y cifrado seguro de contraseñas.
+- **Generación de QR**: `qrcode.react` para consulta ciudadana móvil en vivo.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📁 Estructura del Proyecto
+- `src/components`: Componentes reutilizables (como `ProtectedRoute`).
+- `src/contexts`: Contextos globales (ej. `AuthContext` para inicio y cierre de sesión).
+- `src/layouts`: Plantillas de diseño base (ej. `DashboardLayout` con Navbar y Sidebar).
+- `src/pages`: Vistas de la aplicación (Login, Consulta Ciudadana con QR, Dashboard).
+- `src/services`: Conectores externos (cliente de Supabase con manejador de errores centralizado).
+- `supabase/migrations`: Scripts DDL de base de datos e inyección de datos de prueba.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
