@@ -3,6 +3,8 @@ import { AuthProvider } from "@/contexts/AuthContext"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
 import { DashboardLayout } from "@/layouts/DashboardLayout"
 import { Login } from "@/pages/Login"
+import { Vendors } from "@/pages/Vendors"
+import { Inspections } from "@/pages/Inspections"
 import { QRCodeSVG } from 'qrcode.react'
 
 // Mock/Placeholder Views with premium styling
@@ -148,10 +150,10 @@ function App() {
             }
           >
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/vendedores" element={<PlaceholderView title="Gestión de Vendedores" />} />
+            <Route path="/vendedores" element={<Vendors />} />
             <Route path="/puestos" element={<PlaceholderView title="Gestión de Puestos" />} />
             <Route path="/licencias" element={<PlaceholderView title="Gestión de Licencias" />} />
-            <Route path="/inspecciones" element={<PlaceholderView title="Gestión de Inspecciones" />} />
+            <Route path="/inspecciones" element={<Inspections />} />
           </Route>
 
           {/* Redirección por defecto */}

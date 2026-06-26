@@ -110,6 +110,7 @@ export type Database = {
         Row: {
           codigo_unico: string
           created_at: string
+          estado_sanitario: string
           id: string
           tipo_carretilla: string
           ubicacion: string
@@ -118,6 +119,7 @@ export type Database = {
         Insert: {
           codigo_unico: string
           created_at?: string
+          estado_sanitario?: string
           id?: string
           tipo_carretilla: string
           ubicacion: string
@@ -126,6 +128,7 @@ export type Database = {
         Update: {
           codigo_unico?: string
           created_at?: string
+          estado_sanitario?: string
           id?: string
           tipo_carretilla?: string
           ubicacion?: string
@@ -167,6 +170,7 @@ export type Database = {
       }
       vendedores: {
         Row: {
+          activo: boolean
           apellidos: string
           created_at: string
           dni: string
@@ -176,6 +180,7 @@ export type Database = {
           telefono: string | null
         }
         Insert: {
+          activo?: boolean
           apellidos: string
           created_at?: string
           dni: string
@@ -185,6 +190,7 @@ export type Database = {
           telefono?: string | null
         }
         Update: {
+          activo?: boolean
           apellidos?: string
           created_at?: string
           dni?: string
